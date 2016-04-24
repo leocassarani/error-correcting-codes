@@ -1,0 +1,27 @@
+<!doctype html>
+<html>
+  <head>
+    <style>
+      #canvas {
+        border: 1px solid black;
+        display: block;
+        margin: 0 auto;
+      }
+
+      #form {
+        display: block;
+        margin: 20px auto;
+        text-align: center;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="canvas" width="600" height="600"></canvas>
+    <div id="form">
+      <label for="order">Order of the Hadamard matrix:</label>
+      <input id="order" type="number" min="1" value="1"></input>
+    </div>
+    <script src="matrix.js"></script>
+    <script src="main.js"></script>
+  </body>
+</html>

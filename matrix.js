@@ -53,7 +53,7 @@
   };
 
   Matrix.prototype._boundsCheck = function (row, col) {
-    if (row >= this.size || col >= this.size) {
+    if (row < 0 || row >= this.size || col < 0 || col >= this.size) {
       throw new Error('Out of bounds: (' + row + ', ' + col + ')');
     }
   };

@@ -27,14 +27,14 @@
     }
   }
 
-  function hadamard(subscript) {
-    if (subscript === 1) {
+  function hadamard(order) {
+    if (order === 1) {
       return new Matrix([
         1,  1,
         1, -1
       ]);
     }
 
-    return hadamard(subscript - 1).cartesianProduct(hadamard(1));
+    return hadamard(order - 1).cartesianProduct(hadamard(1));
   }
 })();

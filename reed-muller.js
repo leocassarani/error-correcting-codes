@@ -67,29 +67,27 @@ ReedMuller.prototype.decode = function (chunk) {
 };
 
 ReedMuller.prototype._closestMatches = function (codeword) {
-  var similarities = [],
-      indices = [],
+  var indices = [],
       max = 0,
-      matrix = this.matrix;
+      matrix = this.matrix,
+      score;
 
   for (var row = 0; row < matrix.size; row++) {
-    similarities[row] = codeword.reduce(function (count, letter, col) {
+    score = codeword.reduce(function (count, letter, col) {
       if (letter === matrix.get(row, col)) {
         return count + 1;
       } else {
         return count;
       }
     }, 0);
-  }
 
-  similarities.forEach(function (sim, idx) {
-    if (sim > max) {
-      max = sim;
-      indices = [idx];
-    } else if (sim === max) {
-      indices.push(idx);
+    if (score > max) {
+      max = score;
+      indices = [row];
+    } else if (score === max) {
+      indices.push(row);
     }
-  });
+  }
 
   return indices;
 };

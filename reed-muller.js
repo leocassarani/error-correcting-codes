@@ -69,16 +69,17 @@ ReedMuller.prototype.decode = function (chunk) {
 ReedMuller.prototype._closestMatches = function (codeword) {
   var similarities = [],
       indices = [],
-      max = 0;
+      max = 0,
+      matrix = this.matrix;
 
-  for (var row = 0; row < this.matrix.size; row++) {
+  for (var row = 0; row < matrix.size; row++) {
     similarities[row] = codeword.reduce(function (count, letter, col) {
-      if (letter === this.matrix.get(row, col)) {
+      if (letter === matrix.get(row, col)) {
         return count + 1;
       } else {
         return count;
       }
-    }.bind(this), 0);
+    }, 0);
   }
 
   similarities.forEach(function (sim, idx) {

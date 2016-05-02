@@ -1,0 +1,11 @@
+#!/usr/bin/env node
+
+var ReedMuller = require('../reed-muller'),
+    decoder = new ReedMuller();
+
+process.stdin.on('readable', function () {
+  var chunk;
+  while (null !== (chunk = process.stdin.read(decoder.codewordLength))) {
+    process.stdout.write(decoder.decode(chunk));
+  }
+});

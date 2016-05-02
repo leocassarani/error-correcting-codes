@@ -4,11 +4,11 @@ function ReedMuller() {
   this.length = 8;
   this.matrix = hadamard(this.length);
   this.order  = Math.pow(2, this.length);
-  this.byteCount = this.order / this.length;
+  this.codewordLength = this.order / this.length;
 }
 
 ReedMuller.prototype.encode = function (chunk) {
-  var buf = Buffer.alloc(this.byteCount * chunk.length),
+  var buf = Buffer.alloc(this.codewordLength * chunk.length),
       codeword;
 
   for (var i = 0; i < chunk.length; i++) {
@@ -22,7 +22,7 @@ ReedMuller.prototype.encode = function (chunk) {
 ReedMuller.prototype._writeCodeword = function (codeword, buf, index) {
   var bits, byte;
 
-  for (var j = 0; j < this.byteCount; j++) {
+  for (var j = 0; j < this.codewordLength; j++) {
     bits = codeword.slice(j * 8, j * 8 + 8);
     byte = 0;
 
@@ -34,8 +34,63 @@ ReedMuller.prototype._writeCodeword = function (codeword, buf, index) {
       }
     }
 
-    buf.writeUInt8(byte, index * this.byteCount + j);
+    buf.writeUInt8(byte, index * this.codewordLength + j);
   }
+};
+
+ReedMuller.prototype.decode = function (chunk) {
+  if (chunk.length !== this.codewordLength) {
+    throw new Error('Invalid data size: expected exactly ' + this.codewordLength + ' bytes, got ' + chunk.length);
+  }
+
+  var codeword = chunk.reduce(function (memo, byte) {
+    var letter;
+    for (var k = 0; k < 8; k++) {
+      // If the kth bit is set, turn it into -1; otherwise, 1.
+      letter = (byte >> k) & 1 ? -1 : 1;
+      memo.push(letter);
+    }
+    return memo;
+  }, []);
+
+  var matches = this._closestMatches(codeword);
+
+  if (matches.length === 1) {
+    // If we found a single match, then we've been able to correct any errors.
+    // Return the byte that most closely matched the codeword we received as input.
+    return Buffer.alloc(1, matches[0]);
+  } else {
+    // If there have been more than one match, then we know an error has occurred,
+    // but we can't correct it. Let's return "?" to indicate that.
+    return Buffer.from('?');
+  }
+};
+
+ReedMuller.prototype._closestMatches = function (codeword) {
+  var similarities = [],
+      indices = [],
+      max = 0;
+
+  for (var row = 0; row < this.matrix.size; row++) {
+    similarities[row] = codeword.reduce(function (count, letter, col) {
+      if (letter === this.matrix.get(row, col)) {
+        return count + 1;
+      } else {
+        return count;
+      }
+    }.bind(this), 0);
+  }
+
+  similarities.forEach(function (sim, idx) {
+    if (sim > max) {
+      max = sim;
+      indices = [idx];
+    } else if (sim === max) {
+      indices.push(idx);
+    }
+  });
+
+  return indices;
 };
 
 module.exports = ReedMuller;

@@ -58,5 +58,9 @@
     }
   };
 
-  window.Matrix = Matrix;
+  if (typeof window !== 'undefined') {
+    window.Matrix = Matrix;
+  } else {
+    module.exports = Matrix;
+  }
 })();

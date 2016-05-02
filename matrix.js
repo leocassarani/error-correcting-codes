@@ -27,6 +27,15 @@
     return this.cells[row * this.size + col];
   };
 
+  Matrix.prototype.getRow = function (idx) {
+    this._boundsCheck(idx, 0);
+
+    var start = idx * this.size,
+        end = start + this.size;
+
+    return this.cells.slice(start, end);
+  }
+
   Matrix.prototype.set = function (row, col, value) {
     this._boundsCheck(row, col);
     this.cells[row * this.size + col] = value;

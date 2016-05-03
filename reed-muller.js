@@ -8,7 +8,7 @@ function ReedMuller() {
 }
 
 ReedMuller.prototype.encode = function (chunk) {
-  var buf = Buffer.alloc(this.codewordLength * chunk.length),
+  var buf = new Buffer(this.codewordLength * chunk.length),
       codeword;
 
   for (var i = 0; i < chunk.length; i++) {
@@ -58,11 +58,11 @@ ReedMuller.prototype.decode = function (chunk) {
   if (matches.length === 1) {
     // If we found a single match, then we've been able to correct any errors.
     // Return the byte that most closely matched the codeword we received as input.
-    return Buffer.alloc(1, matches[0]);
+    return new Buffer(matches);
   } else {
     // If there have been more than one match, then we know an error has occurred,
     // but we can't correct it. Let's return "?" to indicate that.
-    return Buffer.from('?');
+    return new Buffer('?');
   }
 };
 

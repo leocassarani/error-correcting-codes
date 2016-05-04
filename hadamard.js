@@ -1,6 +1,10 @@
 (function () {
-  if (typeof require !== 'undefined') {
-    var Matrix = require('./matrix');
+  var Matrix;
+
+  if (typeof window !== 'undefined') {
+    Matrix = window.Matrix;
+  } else {
+    Matrix = require('./matrix');
   }
 
   function hadamard(order) {
